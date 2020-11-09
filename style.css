@@ -1,0 +1,63 @@
+html,body{
+  width: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  font-family: 'Turret Road', cursive;
+
+}
+
+h1{
+  color:rgba(0, 0, 0, 0.91);
+  font-size: 2.5em;
+}
+
+
+#slider{
+  position: absolute;
+  width:64px;
+  height:64px;
+  top: 150px;
+  left: calc(50%-2em);
+  border-radius: 50%;
+
+  background-color: white;
+  box-shadow: inset 0 0 1em rgb(243, 243, 243), 0px 5px 1em gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 10;
+}
+
+
+#slider:hover{
+  cursor: pointer;
+}
+
+#track{
+  position: absolute;
+  width:70px;
+  height:375px;
+  top: 145px;
+  left: calc(50%-2em);
+  border-radius: 35px;
+
+  background-color: rgb(202, 201, 201);
+  box-shadow: inset 0 0 1em rgb(0, 0, 0), 0px 3px 1em gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 5;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
