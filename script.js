@@ -2,130 +2,86 @@ const body = document.querySelector('body');
 const title = document.querySelector('h1');
 const slider = document.querySelector('#slider');
 
-const marginTop = slider.offsetTop;
-const sliderHeight = slider.offsetHeight;
-
-let mouseY, isMouseDown;
+let mouseY, startY, isMouseDown;
 let permision = true;
-let inRange = true;
-let block = false;
-let pomocnicza = 0, transform = 0;
-let startY, startOffSet;
+let pomocnicza = 0, translate = 0;
+
 
 const init = () => {
-  document.addEventListener('mousemove', handleMousemove);
-  slider.addEventListener('dblclick', dblClickSetup);
+   document.addEventListener('mousemove', handleMousemovement);
+   slider.addEventListener('dblclick', dblClickSetup);
+   slider.addEventListener('mousedown', () => {
+      isMouseDown = true;
+   });
+   document.addEventListener('mouseup', () => {
+      isMouseDown = false;
+      permision = true;
+      pomocnicza = translate;
+      console.log(slider.style.transform);
+   })
 }
 
-const handleMousemove = () => {
-  mousePress();
-  if (isMouseDown) {
-    translatingSlider();
-  }
+const handleMousemovement = (e) => {
+   if (isMouseDown) {
+      translatingSlider(e);
+   }
 }
 
-//decides whether mouseKey is pressed or not
-const mousePress = () => {
-  //onMouse click
-  slider.onmousedown = function () {
-    isMouseDown = true;
-    startOffSet = slider.offsetTop;
-  }
-  //onMouse release
-  document.onmouseup = function () {
-    isMouseDown = false;
-    permision = true;
-    pomocnicza = transform
-    console.log(slider.style.transform)
-  }
-}
-
-// happens only once at the beginning of move to avoid bugging
+// happens only once at the beginning of the move to avoid bugging
 const permisionGranting = () => {
-  if (permision) {
-    startY = mouseY;
-    permision = false;
-    console.log(`pomocnicza${transform}`);
-    console.log(`mouseY${transform}`);
-  }
+   if (permision) {
+      startY = mouseY;
+      permision = false;
+      console.log(`pomocnicza-${pomocnicza}`);
+      console.log(`touch place-${mouseY - 150}`);
+   }
 }
 
 //translates the slider and changes background-color
-const translatingSlider = () => {
-  mouseY = window.event.y; //key idea is here (?) -32 +32
-  console.log(`transform ${transform}`)
-  if (inRange) {
-    permisionGranting();
-    if (transform >= 0 && transform <= 300) {
-      if (block) {
-        transform = 0;
-      } else {
-        transform = mouseY - startY + pomocnicza;
-      }
-      if (mouseY > marginTop && block === true) {
-        block = false;
-        startY = mouseY;
-        pomocnicza = 0;
+const translatingSlider = (e) => {
+   mouseY = e.y;
+
+   permisionGranting();
+   if (translate >= 0 && translate <= 300) {
+      translate = mouseY - startY + pomocnicza;
+
+      if (translate < 0) {
+         translate = 0;
+      } else if (translate > 300) {
+         translate = 300;
       }
 
-      if (transform < 0) {
-        transform = 0;
-      } else if (transform > 300) {
-        transform = 300;
-      }
-      slider.style.transform = `translate(0,${transform}px)`;
-      body.style.backgroundColor = `rgba(0, 0, 0, ${(transform) / 300})`;
-      title.style.color = `rgba(${transform}, ${transform}, ${transform}, 0.91)`;
-    } else if (transform < 0) {
-      slider.style.transform = `translate(0,0px)`;
-      // isMouseDown = false;
-      inRange = false;
-      transform = 0;
-    } else {
-      slider.style.transform = `translate(0,300px)`;
-      // isMouseDown = false;
-      inRange = false;
-      transform = 300;
-    }
-  } else if (mouseY >= marginTop && mouseY <= marginTop + 300) {
-    inRange = true;
-
-
-    //tu cos
-    if (transform === 0) {
-      // startY = marginTop + pomocnicza + 64;
-      // transform = 0;
-      block = true;
-    } else {
-      startY = marginTop + pomocnicza;
-    }
-  }
-}
-
-const dblClickSetup = function () {
-  this.style.transition = 'transform 0.7s  ease-in-out';
-  body.style.transition = 'background-color 0.7s ease-in-out';
-  title.style.transition = 'color 0.7s ease-in-out';
-  if (150 - transform >= 0 && transform !== 0 || transform === 300) {
-    transform = 0;
-    pomocnicza = 0;
-    this.style.transform = 'translate(0, 0px)';
-    title.style.color = 'rgba(0 ,0 , 0, 0.91)';
-    body.style.backgroundColor = 'rgba(0 ,0 , 0, 0)';
-  } else if (150 - transform < 0 && transform !== 300 || transform === 0) {
-    transform = 300;
-    pomocnicza = 300;
-    this.style.transform = 'translate(0, 300px)';
-    title.style.color = 'rgb(255 ,255 , 255)';
-    body.style.backgroundColor = 'rgba(0 ,0 , 0, 1)';
-  }
-
-  setTimeout(function () {
-    slider.style.transition = '';
-    body.style.transition = '';
-    title.style.transition = '';
-  }, 700);
+      slider.style.transform = `translate(0,${translate}px)`;
+      body.style.backgroundColor = `rgba(0, 0, 0, ${(translate) / 300})`;
+      title.style.color = `rgb(${translate}, ${translate}, ${translate})`;
+   }
 
 }
 
-init()
+const dblClickSetup = () => {
+   slider.style.transition = 'transform .8s  ease-in-out';
+   body.style.transition = 'background-color .8s ease-in-out';
+   title.style.transition = 'color .8s ease-in-out';
+   if (150 - translate >= 0 && translate !== 0 || translate === 300) {
+      translate = 0;
+      pomocnicza = 0;
+      slider.style.transform = 'translate(0, 0px)';
+      title.style.color = 'rgb(0 ,0 , 0)';
+      body.style.backgroundColor = 'rgba(255 ,255 , 255)';
+   } else if (150 - translate < 0 && translate !== 300 || translate === 0) {
+      translate = 300;
+      pomocnicza = 300;
+      slider.style.transform = 'translate(0, 300px)';
+      title.style.color = 'rgb(255 ,255 , 255)';
+      body.style.backgroundColor = 'rgb(0 ,0 , 0)';
+   }
+
+   setTimeout(function () {
+      slider.style.transition = '';
+      body.style.transition = '';
+      title.style.transition = '';
+   }, 800);
+
+}
+
+init();
